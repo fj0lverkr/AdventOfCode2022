@@ -23,7 +23,6 @@ def partOne(f) -> int:
                 totalPrio += PRIOS[item]
     return totalPrio
                         
-
-
 if __name__ == "__main__":
     print(partOne('Python/3/input.txt'))
+    
