@@ -19,7 +19,7 @@ def create_loadplan(lines) -> dict[int, list]:
     return load_plan
 
 
-def do_moves(start: int, lines: list, load_plan: dict) -> dict[int, list]:
+def do_moves(start: int, lines: list, load_plan: dict, is_first_part: bool) -> dict[int, list]:
     for line in lines[start:]:
         line = line.replace("move ", "").replace(
             " from ", "-").replace(" to ", "-").strip()
@@ -27,19 +27,26 @@ def do_moves(start: int, lines: list, load_plan: dict) -> dict[int, list]:
         num_move = int(commands[0])
         from_move = int(commands[1])
         to_move = int(commands[2])
+        temp_items = load_plan[from_move][len(
+            load_plan[from_move]) - (num_move):len(load_plan[from_move])]
         for _ in range(num_move):
             item = load_plan[from_move].pop()
-            load_plan[to_move].append(item)
+            if is_first_part:
+                load_plan[to_move].append(item)
+        if not is_first_part:
+            for i in temp_items:
+                load_plan[to_move].append(i)
     return load_plan
 
 
-def part_one(f) -> str:
+def all_parts(f, is_first_part) -> str:
     with open(f, 'r') as input:
         result = ""
         lines = input.readlines()
         initial_plan = create_loadplan(lines)
         moves_start = len(initial_plan) + 1
-        resulting_plan = do_moves(moves_start, lines, initial_plan)
+        resulting_plan = do_moves(
+            moves_start, lines, initial_plan, is_first_part)
         for _, v in resulting_plan.items():
             l = len(v)
             if l == 0:
@@ -50,4 +57,5 @@ def part_one(f) -> str:
 
 
 if __name__ == "__main__":
-    print(part_one("Python/5/input.txt"))
+    print(all_parts("Python/5/input.txt", True))
+    print(all_parts("Python/5/input.txt", False))
